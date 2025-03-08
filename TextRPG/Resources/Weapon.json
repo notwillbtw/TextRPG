@@ -1,0 +1,17 @@
+[
+    {
+        "Name": "Dagger",
+        "Damage": 5,
+        "Durability": 80
+    },
+    {
+        "Name": "Knights_Sword",
+        "Damage": 12,
+        "Durability": 90
+    },
+    {
+        "Name": "Hatchet",
+        "Damage": 8,
+        "Durability": 80
+    }
+]

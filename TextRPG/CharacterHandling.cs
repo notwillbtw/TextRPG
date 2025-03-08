@@ -79,8 +79,8 @@ namespace TextRPG
                     Player.CharismaStat = 6;
                     Player.ArcaneStat = 0;
 
-                    AddItemToIventory(ItemType.weapon, "Dagger");
-                    AddItemToIventory(ItemType.food, "Apple");
+                    AddItemToIventory(ItemType.Weapon, "Dagger");
+                    AddItemToIventory(ItemType.Food, "Apple");
 
                     UI.TypeWriterConsoleWrite("Press enter to continue.");
                     Console.ReadLine();
@@ -98,8 +98,8 @@ namespace TextRPG
                     Player.CharismaStat = 4;
                     Player.ArcaneStat = 1;
 
-                    AddItemToIventory(ItemType.weapon, "Knights_Sword");
-                    AddItemToIventory(ItemType.food, "Steak");
+                    AddItemToIventory(ItemType.Weapon, "Knights_Sword");
+                    AddItemToIventory(ItemType.Food, "Steak");
 
                     UI.TypeWriterConsoleWrite("Press enter to continue.");
                     Console.ReadLine();
@@ -116,8 +116,8 @@ namespace TextRPG
                     Player.CharismaStat = 9;
                     Player.ArcaneStat = -1;
 
-                    AddItemToIventory(ItemType.weapon, "Hatchet");
-                    AddItemToIventory(ItemType.food, "Bread");
+                    AddItemToIventory(ItemType.Weapon, "Hatchet");
+                    AddItemToIventory(ItemType.Food, "Bread");
 
                     UI.TypeWriterConsoleWrite("Press enter to continue.");
                     Console.ReadLine();
@@ -129,32 +129,40 @@ namespace TextRPG
 
         private void AddItemToIventory(ItemType itemType, string itemName)
         {
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", $"{itemType}.json");
-            string inventoryFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "playerInventory.json");
+            string workingDirectory = Environment.CurrentDirectory;
+            string filePath = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.FullName, "Resources", $"{itemType}.json");
             string itemLibrary = File.ReadAllText(filePath);
+            string inventoryFilePath = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.FullName, "Resources", "playerInventory.json");
+            string jsonInventoryString = "";
 
             switch (itemType)
             {
-                case ItemType.weapon:
+                case ItemType.Weapon:
                     List<Weapon> weaponList = JsonSerializer.Deserialize<List<Weapon>>(itemLibrary);
 
                     Weapon weapon = weaponList.Where(w => w.Name == itemName).First();
 
+                    //string jsonWeaponString = JsonSerializer.Serialize(weapon);
+
                     PlayerInventory.Add(weapon);
 
-                    string jsonWeaponString = JsonSerializer.Serialize(weapon);
+                    jsonInventoryString = JsonSerializer.Serialize(PlayerInventory);
 
-                    File.WriteAllText(inventoryFilePath, jsonWeaponString);
+                    File.WriteAllText(inventoryFilePath, jsonInventoryString);
 
                     break;
-                case ItemType.food:
+                case ItemType.Food:
                     List<Food> foodList = JsonSerializer.Deserialize<List<Food>>(itemLibrary);
 
                     Food food = foodList.Where(f => f.Name == itemName).First();
 
-                    string jsonFoodString = JsonSerializer.Serialize(food);
+                    //string jsonFoodString = JsonSerializer.Serialize(food);
 
-                    File.WriteAllText(inventoryFilePath, jsonFoodString);
+                    PlayerInventory.Add(food);
+
+                    jsonInventoryString = JsonSerializer.Serialize(PlayerInventory);
+
+                    File.WriteAllText(inventoryFilePath, jsonInventoryString);
 
                     break;
             }

@@ -2,8 +2,8 @@
 {
     internal enum ItemType
     {
-        weapon,
-        food
+        Weapon,
+        Food
     }
 
     internal enum ItemNames

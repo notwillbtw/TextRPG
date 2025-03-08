@@ -1,0 +1,14 @@
+[
+    {
+        "Name": "Apple",
+        "HealAmount": 5
+    },
+    {
+        "Name": "Steak",
+        "HealAmount": 20
+    },
+    {
+        "Name": "Bread",
+        "HealAmount": 10
+    }
+]
