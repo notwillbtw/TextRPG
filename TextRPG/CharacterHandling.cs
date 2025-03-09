@@ -118,7 +118,7 @@ namespace TextRPG
             Console.ReadLine();
         }
 
-        internal void CharacterCreator()
+        public void CharacterCreator()
         {
             LoadExistingCharacter();
 
@@ -160,7 +160,7 @@ namespace TextRPG
                     UI.TypeWriterConsoleWrite("Press enter to continue.");
                     Console.ReadLine();
 
-                    plotline.peasantPlotline();
+                    plotline.storyMain();
 
                     break;
                 case "2":
@@ -184,7 +184,7 @@ namespace TextRPG
                     UI.TypeWriterConsoleWrite("Press enter to continue.");
                     Console.ReadLine();
 
-                    plotline.peasantPlotline();
+                    plotline.storyMain();
                     break;
                 case "3":
                     UI.TypeWriterConsoleWrite("Welcome, Peasant.");
@@ -207,7 +207,7 @@ namespace TextRPG
                     UI.TypeWriterConsoleWrite("Press enter to continue.");
                     Console.ReadLine();
 
-                    plotline.peasantPlotline();
+                    plotline.storyMain();
                     break;
             }
         }

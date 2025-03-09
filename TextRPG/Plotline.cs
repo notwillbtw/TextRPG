@@ -4,7 +4,7 @@
     {
 
 
-        internal void peasantPlotline()
+        internal void storyMain()
         {
             encounter1();
         }

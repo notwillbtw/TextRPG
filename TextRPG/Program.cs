@@ -4,9 +4,7 @@
     {
         static void Main(string[] args)
         {
-            CharacterHandling characterHandling = new CharacterHandling();
-
-            characterHandling.CharacterCreator();
+            UI.MainMenu();
         }
 
 
