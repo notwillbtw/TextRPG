@@ -2,6 +2,11 @@
 {
     internal class UI
     {
+        internal static void MainMenu()
+        {
+
+        }
+
         internal static void TypeWriterConsoleWrite(string textToPrint)
         {
             foreach (var item in textToPrint)

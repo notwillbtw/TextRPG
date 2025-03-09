@@ -1,13 +1,19 @@
 [
     {
+        "_GETOUT":"YOURE NOT SUPPOSED TO BE HERE"
+    },
+    {
+        "Type": "Food",
         "Name": "Apple",
         "HealAmount": 5
     },
     {
+        "Type": "Food",
         "Name": "Steak",
         "HealAmount": 20
     },
     {
+        "Type": "Food",
         "Name": "Bread",
         "HealAmount": 10
     }

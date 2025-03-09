@@ -1,4 +1,5 @@
 ﻿using Items;
+using Newtonsoft.Json.Linq;
 using System.Text.Json;
 
 namespace TextRPG
@@ -47,14 +48,80 @@ namespace TextRPG
 
     internal class CharacterHandling
     {
+        internal static string workingDirectory = Environment.CurrentDirectory;
+        internal string resourcesFilePath = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.FullName, "Resources");
+
+        JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+
         Plotline plotline = new Plotline();
 
         internal List<object> PlayerInventory = new();
 
         internal static Character Player = new();
 
+        internal void LoadExistingCharacter()
+        {
+            string playerInventoryString = File.ReadAllText(Path.Combine(resourcesFilePath, "PlayerInventory.json"));
+
+            if (String.IsNullOrWhiteSpace(playerInventoryString))
+            {
+                Console.WriteLine("No items found.");
+            }
+            else
+            {
+                JArray jsonArray = JArray.Parse(playerInventoryString);
+
+                List<Weapon> weapons = new List<Weapon>();
+                List<Food> foods = new List<Food>();
+
+                foreach (var obj in jsonArray)
+                {
+                    string type = obj["Type"].ToString();
+
+                    if (type == "Weapon")
+                    {
+                        weapons.Add(new Weapon
+                        {
+                            Type = ItemType.Weapon,
+                            Name = obj["Name"].ToString(),
+                            Damage = Convert.ToInt32(obj["Damage"]),
+                            Durabibily = Convert.ToInt32(obj["Durability"])
+                        });
+                    }
+                    else if (type == "Food")
+                    {
+                        foods.Add(new Food
+                        {
+                            Type = ItemType.Food,
+                            Name = obj["Name"].ToString(),
+                            HealAmount = Convert.ToInt32(obj["HealAmount"]),
+                        });
+                    }
+                }
+
+                PlayerInventory.AddRange(weapons);
+                PlayerInventory.AddRange(foods);
+            }
+
+            
+
+            string playerAttributesString = File.ReadAllText(Path.Combine(resourcesFilePath, "PlayerAttributes.json"));
+
+            Player = JsonSerializer.Deserialize<Character>(playerAttributesString);
+            
+            foreach (Weapon fwef in PlayerInventory)
+            {
+                Console.WriteLine($"{fwef.Name} has {fwef.Durabibily} health and has {fwef.Damage} charisma");
+            }
+
+            Console.WriteLine($"{Player.PlayerName} has {Player.PlayerHealth} health and has {Player.CharismaStat} charisma");
+            Console.ReadLine();
+        }
+
         internal void CharacterCreator()
         {
+            LoadExistingCharacter();
+
             UI.TypeWriterConsoleWrite("what's your name stranger?");
 
             Player.PlayerName = Console.ReadLine();
@@ -67,10 +134,14 @@ namespace TextRPG
 
             string characterClass = Console.ReadLine();
 
+            string filePath = Path.Combine(resourcesFilePath, $"PlayerAttributes.json");
+            string playerAttributesJson = "";
+
             switch (characterClass)
             {
                 case "1":
                     UI.TypeWriterConsoleWrite("Welcome, assassin.");
+
                     Player.PlayerHealth = 70;
                     Player.PlayerRole = Role.assassin;
                     Player.StrengthStat = 3;
@@ -78,6 +149,10 @@ namespace TextRPG
                     Player.StealthStat = 9;
                     Player.CharismaStat = 6;
                     Player.ArcaneStat = 0;
+
+                    playerAttributesJson = JsonSerializer.Serialize(Player, options);
+
+                    File.WriteAllText(filePath, playerAttributesJson);
 
                     AddItemToIventory(ItemType.Weapon, "Dagger");
                     AddItemToIventory(ItemType.Food, "Apple");
@@ -90,6 +165,7 @@ namespace TextRPG
                     break;
                 case "2":
                     UI.TypeWriterConsoleWrite("Welcome, Soldier.");
+
                     Player.PlayerHealth = 100;
                     Player.PlayerRole = Role.soldier;
                     Player.StrengthStat = 9;
@@ -97,6 +173,10 @@ namespace TextRPG
                     Player.StealthStat = 3;
                     Player.CharismaStat = 4;
                     Player.ArcaneStat = 1;
+
+                    playerAttributesJson = JsonSerializer.Serialize(Player, options);
+
+                    File.WriteAllText(filePath, playerAttributesJson);
 
                     AddItemToIventory(ItemType.Weapon, "Knights_Sword");
                     AddItemToIventory(ItemType.Food, "Steak");
@@ -108,6 +188,7 @@ namespace TextRPG
                     break;
                 case "3":
                     UI.TypeWriterConsoleWrite("Welcome, Peasant.");
+
                     Player.PlayerHealth = 50;
                     Player.PlayerRole = Role.peasant;
                     Player.StrengthStat = 4;
@@ -115,6 +196,10 @@ namespace TextRPG
                     Player.StealthStat = 3;
                     Player.CharismaStat = 9;
                     Player.ArcaneStat = -1;
+
+                    playerAttributesJson = JsonSerializer.Serialize(Player, options);
+
+                    File.WriteAllText(filePath, playerAttributesJson);
 
                     AddItemToIventory(ItemType.Weapon, "Hatchet");
                     AddItemToIventory(ItemType.Food, "Bread");
@@ -127,12 +212,12 @@ namespace TextRPG
             }
         }
 
-        private void AddItemToIventory(ItemType itemType, string itemName)
+        internal void AddItemToIventory(ItemType itemType, string itemName)
         {
             string workingDirectory = Environment.CurrentDirectory;
-            string filePath = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.FullName, "Resources", $"{itemType}.json");
+            string filePath = Path.Combine(resourcesFilePath, $"{itemType}.json");
             string itemLibrary = File.ReadAllText(filePath);
-            string inventoryFilePath = Path.Combine(Directory.GetParent(workingDirectory).Parent.Parent.FullName, "Resources", "playerInventory.json");
+            string inventoryFilePath = Path.Combine(resourcesFilePath, "Resources", "playerInventory.json");
             string jsonInventoryString = "";
 
             switch (itemType)
@@ -141,8 +226,6 @@ namespace TextRPG
                     List<Weapon> weaponList = JsonSerializer.Deserialize<List<Weapon>>(itemLibrary);
 
                     Weapon weapon = weaponList.Where(w => w.Name == itemName).First();
-
-                    //string jsonWeaponString = JsonSerializer.Serialize(weapon);
 
                     PlayerInventory.Add(weapon);
 
@@ -156,8 +239,6 @@ namespace TextRPG
 
                     Food food = foodList.Where(f => f.Name == itemName).First();
 
-                    //string jsonFoodString = JsonSerializer.Serialize(food);
-
                     PlayerInventory.Add(food);
 
                     jsonInventoryString = JsonSerializer.Serialize(PlayerInventory);
@@ -166,12 +247,7 @@ namespace TextRPG
 
                     break;
             }
-
-
-
         }
-
-
     }
 
     enum Role
